@@ -2,7 +2,6 @@
 // Created by Aleksandr on 03-Sep-18.
 //
 
-#include <cmath>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -21,8 +20,8 @@ int main(int agrc, char* argv[])
     if (agrc > 5)
     {
         f_type = argv[1];
-        begin_val = strtof(argv[2], nullptr);
-        end_val = strtof(argv[3], nullptr);
+        begin_val = strtod(argv[2], nullptr);
+        end_val = strtod(argv[3], nullptr);
         step_count = strtol(argv[4], nullptr, 10);
         out_name = argv[5];
         if (f_type != "linear"&&f_type != "exp"&&f_type != "sin"&&f_type != "cos")
@@ -44,11 +43,13 @@ int main(int agrc, char* argv[])
         return -1;
     }
 
+    const float sigma = 0.2;
+
     std::ofstream o_f(out_name);
     std::stringstream ss;
     std::random_device rd;
     std::default_random_engine mt(rd());
-    std::uniform_real_distribution<double> noise(-0.5, 0.5);
+    std::uniform_real_distribution<double> noise(-sigma, sigma);
 
     ss << "X, Y" << std::endl;
     o_f << ss.rdbuf();
@@ -62,11 +63,11 @@ int main(int agrc, char* argv[])
         if (f_type == "linear")
             y = x;
         if (f_type == "exp")
-            y = exp(x);
+            y = std::exp(x);
         if (f_type == "sin")
-            y = sin(x);
+            y = std::sin(x);
         if (f_type == "cos")
-            y = cos(x);
+            y = std::cos(x);
 
         y += noise(mt);
 
@@ -76,5 +77,5 @@ int main(int agrc, char* argv[])
         x += h;
     }
 
-    return 1;
+    return 0;
 }
