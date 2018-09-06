@@ -6,7 +6,7 @@
 #include "spline.h"
 
 
-double Spline::alpha(const double& x, const unsigned int& knot_id, const unsigned int& deg) const{
+double Spline::getAlpha(const double &x, const unsigned int &knot_id, const unsigned int &deg) const{
     if (knots[knot_id] == knots[knot_id + deg])
         return 0;
     else
@@ -14,7 +14,7 @@ double Spline::alpha(const double& x, const unsigned int& knot_id, const unsigne
 }
 
 
-void Spline::knots_initialization(const std::vector<double> &x) {
+void Spline::initializationOfKnots(const std::vector<double> &x) {
     const auto points_count = static_cast<const unsigned int>(x.size());
     unsigned int unique_points = 0;
     unsigned int counter;
@@ -51,7 +51,7 @@ void Spline::knots_initialization(const std::vector<double> &x) {
 Spline::Spline(const unsigned int& degree, const unsigned int& knots_count, const std::vector<double>& x){
     this->degree = degree;
     this->knots_count = knots_count;
-    knots_initialization(x);
+    initializationOfKnots(x);
 }
 
 
@@ -65,8 +65,8 @@ double Spline::get_basis_val(const double& x, const unsigned int& knot_id, const
         else
             return 0;
     }
-    double alpha_n = alpha(x, knot_id, deg - 1);
-    double alpha_nn = (1 - alpha(x, knot_id + 1, deg - 1));
+    double alpha_n = getAlpha(x, knot_id, deg - 1);
+    double alpha_nn = (1 - getAlpha(x, knot_id + 1, deg - 1));
     double bas_val = 0;
 
     if (alpha_n > 0.0) {
@@ -79,10 +79,10 @@ double Spline::get_basis_val(const double& x, const unsigned int& knot_id, const
     return bas_val;
 }
 
-unsigned int Spline::get_knots_count() const{
+unsigned int Spline::getKnotsCount() const{
     return knots_count;
 }
 
-unsigned int Spline::get_degree() const {
+unsigned int Spline::getDegree() const {
     return degree;
 }

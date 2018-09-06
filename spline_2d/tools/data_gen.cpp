@@ -8,11 +8,14 @@
 #include <random>
 
 
+double getY(const double&, const std::string&);
+
+
 int main(int argc, char* argv[]){
 
     if (argc < 6){
         std::cout << "Args: <func type*> <begin val> <end val> <step count> <out filename>" << std::endl
-                  << "*: Applied vals - 'linear' 'exp', 'sin', 'cos'" << std::endl;
+                  << "*: Applied vals - 'linear' 'exp', 'sin', 'cos', 'spec'" << std::endl;
         return 1;
     }
 
@@ -34,7 +37,7 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    const float sigma = 0.2;
+    // const float sigma = 0.2;
 
     std::ofstream o_f(out_name);
     std::random_device rd;
@@ -48,24 +51,32 @@ int main(int argc, char* argv[]){
 
     for (int i = 0; i < step_count; ++i)
     {
-
-        x = i + 1./(i+1) * noise(mt);
-        if (f_type == "linear")
-            y = x;
-        if (f_type == "exp")
-            y = std::exp(x);
-        if (f_type == "sin")
-            y = std::sin(x);
-        if (f_type == "cos")
-            y = std::cos(x);
-        if (f_type == "spec")
-            y = std::sin(0.2*x);
-
+        x = i + 1./ (i+1) * noise(mt);
+        y = getY(x, f_type);
         y += noise(mt)*15/(10+x);
 
-        o_f << std::scientific << x << ", " << std::scientific << y << std::endl;
+        o_f << std::scientific << x << "," << std::scientific << y << std::endl;
         x += h;
     }
 
     return 0;
+}
+
+
+double getY(const double& x, const std::string& f_type){
+
+    double y = 0;
+
+    if (f_type == "linear")
+        y = x;
+    else if (f_type == "exp")
+        y = std::exp(x);
+    else if (f_type == "sin")
+        y = std::sin(x);
+    else if (f_type == "cos")
+        y = std::cos(x);
+    else if (f_type == "spec")
+        y = std::sin(0.2*x);
+
+    return y;
 }
