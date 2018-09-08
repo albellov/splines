@@ -3,86 +3,214 @@
 //
 
 #include <iostream>
+#include <cmath>
+
 #include "spline.h"
+#include "tools/tools.h"
 
 
-double Spline::getAlpha(const double &x, const unsigned int &knot_id, const unsigned int &deg) const{
-    if (knots[knot_id] == knots[knot_id + deg])
-        return 0;
-    else
-        return (x - knots[knot_id]) / (knots[knot_id + deg] - knots[knot_id]);
+double Spline::getAlpha(const double &x, const unsigned int &knotId, const unsigned int &deg) const{
+    return (x - knots[knotId]) / (knots[knotId + deg] - knots[knotId]);
 }
 
 
-void Spline::initializationOfKnots(const std::vector<double> &x) {
+void Spline::initializeUniformKnots(const std::vector<double> &x) {
     const auto points_count = static_cast<const unsigned int>(x.size());
     unsigned int unique_points = 0;
-    unsigned int counter;
+    const unsigned int oldKnotsCount = knotsCount;
 
-    knots.resize(knots_count);
-    knots[0] = x[0];
-    knots[knots_count-1] = x[points_count-1];
+    knots.resize(oldKnotsCount + 2 * degree);
 
-    for(int i = 1; i < points_count; i++){
-        if(x[i] != x[i-1]){
+    knotsCount = static_cast<unsigned int>(knots.size());
+
+    for(int i = 0; i < degree + 1; i++){
+        knots[i] = x[0];
+        knots[knotsCount - 1 - i] = x[points_count-1];
+    }
+
+    for(int i = 1; i < points_count - 1; i++){
+        if (x[i] != x[i-1]){
             unique_points ++;
         }
     }
 
     // Number of knots should be less than n - k for n points with unique x.
-    if(unique_points == 0 || unique_points - degree < knots_count){
+    if(unique_points == 0 || unique_points - degree < oldKnotsCount){
         return;
     }
 
-    unsigned int points_for_knot = unique_points / (knots_count - 1);
+    // Put the knots between the desired points.
+    double points_for_knot = (double)unique_points / (oldKnotsCount - 1);
 
-    // TODO: Declaration
-    for(int i = 1, k = 1, j = 0; i < knots_count - 1; i++){
-        for(; j < points_for_knot * i || x[k] == x[k-1]; k++){
-            if(x[k]!=x[k-1]){
-                j++;
+    unsigned int counterDiffPoints = 0;
+    unsigned int ind = 1;
+    bool isCoincidingPoints = x[0] == x[1];
+
+    for (int knotId = 1; knotId < oldKnotsCount - 1; knotId++){
+        for (; counterDiffPoints < points_for_knot * knotId || isCoincidingPoints; ind++){
+            isCoincidingPoints = x[ind] == x[ind-1];
+
+            if (x[ind] != x[ind-1]){
+                counterDiffPoints++;
             }
         }
-        knots[i] = 0.5 * (x[k] + x[k-1]);
+        knots[knotId + degree] = 0.5 * (x[ind] + x[ind-1]);
     }
 }
 
 
-Spline::Spline(const unsigned int& degree, const unsigned int& knots_count, const std::vector<double>& x){
-    this->degree = degree;
-    this->knots_count = knots_count;
-    initializationOfKnots(x);
+void Spline::initializeBSplines(const double& x, std::vector<double>& bSplines){
+
+    const int leftBoardId = getLeftKnotIndex(x, 0);
+
+    bSplines[degree] = 1;
+
+    unsigned int v;
+    double alphaN, alphaNN;
+
+    // TODO: Optimization
+    // Replacement of recurrent calculation of B-splines.
+    for (unsigned int currentDegree = 1; currentDegree < degree + 1; currentDegree++){
+        v = leftBoardId - currentDegree + 1;
+
+        alphaNN = getAlpha(x, v, currentDegree);
+        bSplines[degree - currentDegree] = (1-alphaNN) * bSplines[degree - currentDegree + 1];
+        for (int j = degree - currentDegree + 1; j < degree; j++){
+            alphaN = alphaNN;
+            v++;
+            alphaNN = getAlpha(x, v, currentDegree);
+            bSplines[j] = alphaN * bSplines[j] + (1 - alphaNN) * bSplines[j+1];
+        }
+        bSplines[degree] *= alphaNN;
+    }
 }
 
+// Get S(x).
+double Spline::deBoorAlgorithm(const double& x) const{
 
-double Spline::get_basis_val(const double& x, const unsigned int& knot_id, const unsigned int& deg) const{
-    if ((x < knots[knot_id]) || (x >= knots[knot_id + deg + 1]))
+    int leftBound = getLeftKnotIndex(x, 0);
+    if (leftBound < 0){
         return 0;
-    if (deg == 1)
-    {
-        if ((x >= knots[knot_id]) && (x < knots[knot_id + 1]))
-            return 1;
-        else
-            return 0;
-    }
-    double alpha_n = getAlpha(x, knot_id, deg - 1);
-    double alpha_nn = (1 - getAlpha(x, knot_id + 1, deg - 1));
-    double bas_val = 0;
-
-    if (alpha_n > 0.0) {
-        bas_val = alpha_n*get_basis_val(x, knot_id, deg - 1);
-    }
-    if (alpha_nn > 0.0) {
-        bas_val += alpha_nn*get_basis_val(x, knot_id + 1, deg - 1);
     }
 
-    return bas_val;
+    std::vector<double> values(degree + 1, 0.0);
+    double alpha;
+
+    for (int i = 0; i < degree + 1; i++){
+        values[i] = coefficients[i + leftBound - degree];
+    }
+    for (int i = 1; i < degree + 1; i++){
+        for (auto j = static_cast<unsigned int>(leftBound); j > leftBound - degree + i - 1; j--){
+            alpha = getAlpha(x, j, degree - i + 1);
+            values[j - leftBound + degree] = alpha * values[j - leftBound + degree] +
+                                             (1 - alpha) * values[j - leftBound + degree - 1];
+        }
+    }
+    return values[degree];
 }
+
+
+double Spline::getValue(const double &x) const {
+    if (x < knots[0] || x > knots[knotsCount-1]){
+        return 0;
+    }
+    return deBoorAlgorithm(x);
+}
+
+
+void Spline::computingMatrixA(std::vector<std::vector<double>>& A, const unsigned int& sizeMatrix,
+                              const std::vector<double>& x, const std::vector<double>& y,
+                              const std::vector<double>& w){
+
+    std::vector<double> bSplines(degree + 1, 0.0);
+    coefficients.resize(sizeMatrix);
+
+    int leftBoundId = 0;
+    double wPow2;
+
+    for (unsigned int i = 0; i < x.size(); ++i) {
+        leftBoundId = getLeftKnotIndex(x[i], leftBoundId);
+
+        initializeBSplines(x[i], bSplines);
+
+        for (unsigned int j = 0; j < degree + 1; j++){
+            wPow2 = w[i]*w[i];
+            for (unsigned int k = 0; k < j + 1; k++){
+                A[j + leftBoundId - degree][k + leftBoundId - degree] += wPow2 * bSplines[j] * bSplines[k];
+            }
+            coefficients[j + leftBoundId - degree] += wPow2 * y[i] * bSplines[j];
+        }
+    }
+    reflectionOfMatrix(A, sizeMatrix);
+}
+
+
+void Spline::computingCoefficients(const std::vector<double> &x, const std::vector<double> &y,
+                                   const std::vector<double> &w) {
+
+    const unsigned int sizeMatrix = internalKnotsCount + degree + 1;
+
+    std::vector<std::vector<double>> A(sizeMatrix, std::vector<double>(sizeMatrix, 0.0));
+    std::vector<std::vector<double>> L(sizeMatrix, std::vector<double>(sizeMatrix, 0.0));
+
+    std::vector<double> bSplines(degree + 1, 0.0);
+    coefficients.resize(sizeMatrix);
+
+    computingMatrixA(A, sizeMatrix, x, y, w);
+    decompositionOfCholesky(A, L);
+
+    // Solve L * b = r, where L_T * c = b and L is the lower-triangular matrix.
+    // Vector "b" and vector "r" replaces vector coefficients.
+    for (int i = 0; i < sizeMatrix; ++i) {
+        for (int j = 0; j < i; ++j) {
+            coefficients[i] -= L[i][j] * coefficients[j];
+        }
+        coefficients[i] /= L[i][i];
+    }
+
+    // Solve L_T * c = b, where L_T is the upper-triangular matrix.
+    for (int i = sizeMatrix - 1; i >= 0; i--) {
+        for (int j = sizeMatrix - 1; j > i; j--) {
+            coefficients[i] -= L[j][i] * coefficients[j];
+        }
+        coefficients[i] /= L[i][i];
+    }
+}
+
+
+Spline::Spline(const unsigned int& degree, const unsigned int& knotsCount){
+    this->degree = degree;
+    this->knotsCount = knotsCount;
+    this->internalKnotsCount = knotsCount - 2;
+}
+
+
+int Spline::getLeftKnotIndex(const double &x, const int &minId) const{
+    if(x < knots[0] or x > knots[knotsCount-1]){
+        return -1;
+    }
+
+    if (x == knots[knotsCount - 1]){
+        return knotsCount - degree - 2;
+    }
+
+    for(int ind = minId; ind < knotsCount + degree - 2;){
+        if(knots[ind] <= x && knots[ind + 1] > x){
+            return ind;
+        }
+        else {
+            ind++;
+        }
+    }
+    return minId;
+}
+
 
 unsigned int Spline::getKnotsCount() const{
-    return knots_count;
+    return knotsCount;
 }
 
-unsigned int Spline::getDegree() const {
+
+unsigned int Spline::getDegree() const{
     return degree;
 }

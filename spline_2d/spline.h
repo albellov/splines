@@ -7,24 +7,39 @@
 
 #include <vector>
 
-class Spline
-{
-private:
-    std::vector <double> knots;
-    unsigned int degree;
-    unsigned int knots_count;
-
-    double getAlpha(const double &x, const unsigned int &knot_id, const unsigned int &deg) const;
-    void initializationOfKnots(const std::vector<double> &x);
+class Spline {
 
 public:
-    Spline(const unsigned int& degree, const unsigned int& knots_count, const std::vector<double>& x);
 
-    // Recurrent process of getting basis value.
-    double get_basis_val(const double& x, const unsigned int& knot_id, const unsigned int& deg) const;
+    Spline(const unsigned int& degree, const unsigned int& knotsCount);
+
+    void initializeUniformKnots(const std::vector<double> &x);
+    void computingCoefficients(const std::vector<double> &x, const std::vector<double> &y,
+                               const std::vector<double> &w);
 
     unsigned int getKnotsCount() const;
     unsigned int getDegree() const;
+
+    double getValue(const double& x) const;
+    double getAlpha(const double &x, const unsigned int &knotId, const unsigned int &deg) const;
+
+
+private:
+
+    std::vector<double> knots;
+    std::vector<double> coefficients;
+
+    unsigned int degree;
+    unsigned int knotsCount;
+    unsigned int internalKnotsCount;
+
+    double deBoorAlgorithm(const double& x) const;
+    void initializeBSplines(const double& x, std::vector<double>& bSplines);
+    void computingMatrixA(std::vector<std::vector<double>>& A, const unsigned int& sizeMatrix,
+                                  const std::vector<double>& x, const std::vector<double>& y,
+                                  const std::vector<double>& w);
+
+    int getLeftKnotIndex(const double &x, const int &minId) const;
 };
 
 

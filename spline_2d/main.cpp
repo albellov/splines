@@ -13,32 +13,34 @@
 
 int main(int agrc, char* argv[])
 {
-    if (agrc < 5){
-        std::cout << "Args: <in filename> <out filename> <spline knots count> <spline degree>" << std::endl;
+    if (agrc < 6){
+        std::cout << "Args: <in filename> <out filename> <points count> <spline knots count> <spline degree>" << std::endl;
         return 1;
     }
 
-    const std::string in_name = argv[1];
-    const std::string out_name = argv[2];
-    const unsigned int knots_count = strtoul(argv[3], nullptr, 10);
-    const unsigned int spline_degree = strtoul(argv[4], nullptr, 10);
-
-    const unsigned int basis_count = knots_count + spline_degree - 1;
-    const unsigned int basis_steps_count = 1000;
+    const std::string inputFilename = argv[1];
+    const std::string outputFilename = argv[2];
+    const unsigned int pointsCount = strtoul(argv[3], nullptr, 10);
+    const unsigned int knotsCount = strtoul(argv[4], nullptr, 10);
+    const unsigned int splineDegree = strtoul(argv[5], nullptr, 10);
 
     std::vector<std::string> vals_name;
-    std::vector<double> x, y;
-    std::vector<double> c(basis_count, 0.0);
+    std::vector<double> x, y, w;
 
-    reading_data(x, y, vals_name, in_name);
+    std::cout << "Reading result..." << std::endl;
+    reading_data(x, y, w, vals_name, inputFilename);
 
-    const Spline spl(spline_degree, knots_count, x);
+    std::cout << "Approximation of data..." << std::endl;
+    Spline spl(splineDegree, knotsCount);
 
-    getCoefficients(x, y, spl, c);
+    std::cout << "\tInitialize uniform knots..." << std::endl;
+    spl.initializeUniformKnots(x);
 
-    // Constants found, spline ready.
-    //writing_base(x, spl, out_name, vals_name[0], basis_steps_count);
-    //writing_result(x, y, c, spl, out_name, vals_name, basis_steps_count);
+    std::cout << "\tCalculate coefficients of spline..." << std::endl;
+    spl.computingCoefficients(x, y, w);
+
+    std::cout << "Saving result..." << std::endl;
+    writing_result(x[0], x[x.size()-1], pointsCount, spl, outputFilename, vals_name);
 
     return 0;
 }

@@ -6,55 +6,53 @@
 #include <string>
 #include <iostream>
 #include <random>
+#include <ctime>
 
 
 double getY(const double&, const std::string&);
-
+void printAllowFunctionTypes(const std::vector<std::string>& allowFunctionTypes);
+void checkFunctionTypes(const std::vector<std::string>& allowFunctionTypes, const std::string& functionType);
 
 int main(int argc, char* argv[]){
 
+    const std::vector<std::string> allowFunctionTypes = {"linear", "exp", "sin", "cos", "spec"};
+
     if (argc < 6){
-        std::cout << "Args: <func type*> <begin val> <end val> <step count> <out filename>" << std::endl
-                  << "*: Applied vals - 'linear' 'exp', 'sin', 'cos', 'spec'" << std::endl;
+        std::cout << "Args: <func type*> <begin val> <end val> <step count> <out filename>" << std::endl;
+        printAllowFunctionTypes(allowFunctionTypes);
         return 1;
     }
 
-    const std::string f_type = argv[1];
-    const double begin_val = strtod(argv[2], nullptr);
-    const double end_val = strtod(argv[3], nullptr);
-    const int step_count = strtol(argv[4], nullptr, 10);
-    const std::string out_name = argv[5];
+    const std::string functionType = argv[1];
+    const double beginValue = strtod(argv[2], nullptr);
+    const double endValue = strtod(argv[3], nullptr);
+    const int stepCount = strtol(argv[4], nullptr, 10);
+    const std::string outputFilename = argv[5];
 
-    if (f_type != "linear"&&f_type != "exp"&&f_type != "sin"&&f_type != "cos"&&f_type != "spec")
+    checkFunctionTypes(allowFunctionTypes, functionType);
+
+    if (endValue - beginValue < 0)
     {
-        std::cout << "Unknown function type: <" << f_type << ">" << std::endl
-                  << "Applied vals - 'linear' 'exp', 'sin', 'cos'" << std::endl;
-        return 1;
-    }
-    if (end_val - begin_val < 0)
-    {
-        std::cout << "Error: begin_val > end_val" << std::endl;
+        std::cout << "Error: begin value > end value" << std::endl;
         return 1;
     }
 
-    // const float sigma = 0.2;
+    std::ofstream o_f(outputFilename);
 
-    std::ofstream o_f(out_name);
-    std::random_device rd;
-    std::default_random_engine mt(rd());
-    std::uniform_real_distribution<double> noise(0, 1);
+    o_f << "X,Y" << std::endl;
 
-    o_f << "X, Y" << std::endl;
 
-    double h = (end_val - begin_val) / (double)step_count;
-    double x = begin_val, y = 0.0;
+    std::mt19937_64 mt(static_cast<unsigned long long int>(time(nullptr)));
+    std::uniform_real_distribution<> noise(-1, 1);
 
-    for (int i = 0; i < step_count; ++i)
+    double h = (endValue - beginValue) / (double)stepCount;
+    double x = beginValue, y;
+
+    // const double sigma = 0.2;
+
+    for (int i = 0; i < stepCount; ++i)
     {
-        x = i + 1./ (i+1) * noise(mt);
-        y = getY(x, f_type);
-        y += noise(mt)*15/(10+x);
-
+        y = getY(x, functionType) + noise(mt)*15/(10+x);
         o_f << std::scientific << x << "," << std::scientific << y << std::endl;
         x += h;
     }
@@ -63,20 +61,45 @@ int main(int argc, char* argv[]){
 }
 
 
-double getY(const double& x, const std::string& f_type){
+double getY(const double& x, const std::string& functionType){
 
     double y = 0;
 
-    if (f_type == "linear")
+    if (functionType == "linear")
         y = x;
-    else if (f_type == "exp")
+    else if (functionType == "exp")
         y = std::exp(x);
-    else if (f_type == "sin")
+    else if (functionType == "sin")
         y = std::sin(x);
-    else if (f_type == "cos")
+    else if (functionType == "cos")
         y = std::cos(x);
-    else if (f_type == "spec")
-        y = std::sin(0.2*x);
+    else if (functionType == "spec")
+        y = std::sin(0.2 * x);
 
     return y;
+}
+
+void checkFunctionTypes(const std::vector<std::string>& allowFunctionTypes, const std::string& functionType){
+    bool isAllowFunctionType = false;
+
+    for (const std::string &allowFunctionType : allowFunctionTypes) {
+        if (functionType == allowFunctionType){
+            isAllowFunctionType = true;
+            break;
+        }
+    }
+    if (!isAllowFunctionType){
+        std::cout << "Unknown function type: <" << functionType << ">" << std::endl;
+        printAllowFunctionTypes(allowFunctionTypes);
+        exit(1);
+    }
+}
+
+
+void printAllowFunctionTypes(const std::vector<std::string>& allowFunctionTypes){
+    std::cout << "Applied vals - ";
+    for (const std::string &allowFunctionType : allowFunctionTypes){
+        std::cout << "'" << allowFunctionType << "', ";
+    }
+    std::cout << std::endl;
 }

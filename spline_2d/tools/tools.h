@@ -8,12 +8,13 @@
 #include "../spline.h"
 
 
-void getCoefficients(const std::vector<double> &x, const std::vector<double> &y, const Spline &spl,
-                     std::vector<double> &c);
-void reading_data(std::vector<double>&, std::vector<double>&, std::vector<std::string>&, const std::string&);
-void writing_base(const std::vector<double>&, const Spline&, const std::string&, const std::string&, const unsigned int&);
-void writing_result(const std::vector<double>&, const std::vector<double>&, const std::vector<double>&,
-                    const Spline&, const std::string&, const std::vector<std::string>&, const unsigned int&);
 
+void reading_data(std::vector<double>& x, std::vector<double>& y, std::vector<double>& w,
+                  std::vector<std::string>& vals_name, const std::string& inputFilename);
+void writing_result(const double& leftBound, const double& rightBound, const unsigned int& stepCount,
+                    const Spline& spl, const std::string& out_name, const std::vector<std::string>& vals_name);
+
+void decompositionOfCholesky(const std::vector<std::vector<double>>& A, std::vector<std::vector<double>>& L);
+void reflectionOfMatrix(std::vector<std::vector<double>>& matrix, const unsigned int& size);
 
 #endif //SPLINE_2D_TOOLS_H
