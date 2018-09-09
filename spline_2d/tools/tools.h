@@ -5,7 +5,7 @@
 #ifndef SPLINE_2D_TOOLS_H
 #define SPLINE_2D_TOOLS_H
 
-#include "../spline.h"
+#include "../src/spline.h"
 
 
 

@@ -3,10 +3,9 @@ import sys
 
 
 def reading(filename):
-    vals = [[],[]]
+    vals = [[], []]
 
-    with open(filename,'r') as f:
-
+    with open(filename, 'r') as f:
         labels = f.readline().split(',')
         labels[-1] = labels[-1].replace('\n', '')
 
@@ -17,12 +16,16 @@ def reading(filename):
 
     return vals, labels
 
+
 def main():
+
     try:
         data_filename = sys.argv[1]
         result_filename = sys.argv[2]
-    except:
-        print ("Args: <data filename> <in filename>")
+        result_knots_filename = sys.argv[3]
+
+    except IndexError:
+        print("Args: <data filename> <result filename> <result knots filename>")
         raise SystemExit(0)
 
     vals, labels = reading(data_filename)
@@ -31,12 +34,17 @@ def main():
     vals, labels = reading(result_filename)
     plt.plot(vals[0], vals[1], 'b', label='spline')
 
+    vals, labels = reading(result_knots_filename)
+    plt.plot(vals[0], vals[1], 'gs', label='knots')
+
     plt.title('Approximation of spline')
-    plt.xlabel('X', fontsize = 12)
-    plt.ylabel('Y', fontsize = 12)
+    plt.xlabel('X', fontsize=12)
+    plt.ylabel('Y', fontsize=12)
+
     plt.grid()
     plt.legend()
 
     plt.show()
+
 
 main()

@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "spline.h"
-#include "tools/tools.h"
+#include "../tools/tools.h"
 
 
 int main(int agrc, char* argv[])
@@ -28,6 +28,7 @@ int main(int agrc, char* argv[])
     std::vector<double> x, y, w;
 
     std::cout << "Reading result..." << std::endl;
+
     reading_data(x, y, w, vals_name, inputFilename);
 
     std::cout << "Approximation of data..." << std::endl;

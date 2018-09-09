@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "tools.h"
-#include "../spline.h"
+#include "../src/spline.h"
 
 
 // A is a decomposition of the form A = L*L_T, where L is the lower-triangular matrix.
@@ -31,7 +31,6 @@ void decompositionOfCholesky(const std::vector<std::vector<double>>& A, std::vec
 }
 
 
-
 void reflectionOfMatrix(std::vector<std::vector<double>>& matrix, const unsigned int& size){
     for (int i = 0; i < size; i++){
         for (int j = 0; j < i; j++){
@@ -53,6 +52,18 @@ void writing_result(const double& leftBound, const double& rightBound, const uns
     for (unsigned int i = 0; i < stepCount + 1; ++i) {
 
         currentPoint = leftBound + step*i;
+        o_file << currentPoint << "," << spl.getValue(currentPoint) << std::endl;
+    }
+    o_file.close();
+
+
+    o_file.open(out_name + "_knots");
+    o_file << vals_name[0] << "," << vals_name[1] + "_knot" << std::endl;
+
+    std::vector<double> knots = spl.getKnots();
+    for (unsigned int i = 0; i < spl.getKnotsCount(); ++i) {
+
+        currentPoint = knots[i];
         o_file << currentPoint << "," << spl.getValue(currentPoint) << std::endl;
     }
     o_file.close();

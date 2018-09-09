@@ -13,6 +13,7 @@ double getY(const double&, const std::string&);
 void printAllowFunctionTypes(const std::vector<std::string>& allowFunctionTypes);
 void checkFunctionTypes(const std::vector<std::string>& allowFunctionTypes, const std::string& functionType);
 
+
 int main(int argc, char* argv[]){
 
     const std::vector<std::string> allowFunctionTypes = {"linear", "exp", "sin", "cos", "spec"};
@@ -48,8 +49,6 @@ int main(int argc, char* argv[]){
     double h = (endValue - beginValue) / (double)stepCount;
     double x = beginValue, y;
 
-    // const double sigma = 0.2;
-
     for (int i = 0; i < stepCount; ++i)
     {
         y = getY(x, functionType) + noise(mt)*15/(10+x);
@@ -78,6 +77,7 @@ double getY(const double& x, const std::string& functionType){
 
     return y;
 }
+
 
 void checkFunctionTypes(const std::vector<std::string>& allowFunctionTypes, const std::string& functionType){
     bool isAllowFunctionType = false;
