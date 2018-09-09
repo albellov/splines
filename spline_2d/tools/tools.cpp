@@ -65,6 +65,10 @@ void reading_data(std::vector<double>& x, std::vector<double>& y, std::vector<do
     std::ifstream i_file(inputFilename);
     std::string line;
 
+    double xValue;
+    double yValue;
+    double wValue;
+
     if (!i_file.is_open())
     {
         std::cout << "In file doesn't exist!" << std::endl;
@@ -81,10 +85,13 @@ void reading_data(std::vector<double>& x, std::vector<double>& y, std::vector<do
             break;
         }
 
-        //TODO: Refactoring
-        x.push_back(strtod(line.substr(0, line.find(',')).c_str(), nullptr));
-        y.push_back(strtod(line.substr(line.find(',') + 1, line.size() - 1).c_str(), nullptr));
-        w.push_back(1.0);
+        xValue = strtod(line.substr(0, line.find(',')).c_str(), nullptr);
+        yValue = strtod(line.substr(line.find(',') + 1, line.size() - 1).c_str(), nullptr);
+        wValue = 1.0;
+
+        x.push_back(xValue);
+        y.push_back(yValue);
+        w.push_back(wValue);
     }
     i_file.close();
 }
