@@ -14,7 +14,7 @@
 int main(int agrc, char* argv[])
 {
     if (agrc < 6){
-        std::cout << "Args: <in filename> <out filename> <points count> <spline knots count> <spline degree>" << std::endl;
+        std::cout << "Args: <data filename> <result filename> <points count> <spline knots count> <spline degree>" << std::endl;
         return 1;
     }
 

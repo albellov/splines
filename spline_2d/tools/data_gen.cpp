@@ -97,7 +97,7 @@ void checkFunctionTypes(const std::vector<std::string>& allowFunctionTypes, cons
 
 
 void printAllowFunctionTypes(const std::vector<std::string>& allowFunctionTypes){
-    std::cout << "Applied vals - ";
+    std::cout << "Allow function types: ";
     for (const std::string &allowFunctionType : allowFunctionTypes){
         std::cout << "'" << allowFunctionType << "', ";
     }
