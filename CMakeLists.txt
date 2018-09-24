@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
-project(spline_2d)
+project(splines)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(data_gen spline_2d/tools/data_gen.cpp)
-add_executable(spline spline_2d/src/main.cpp spline_2d/src/spline.cpp spline_2d/src/spline.h spline_2d/tools/tools.cpp spline_2d/tools/tools.h)
+add_executable(data_gen tools/data_gen.cpp)
+
+add_executable(splines_2d spline_2d/src/main.cpp spline_2d/src/spline_2d.cpp tools/tools.cpp)
+add_executable(splines_3d spline_3d/src/main.cpp spline_3d/src/spline_3d.cpp tools/tools.cpp)

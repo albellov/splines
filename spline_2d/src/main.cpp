@@ -7,8 +7,8 @@
 #include <iostream>
 #include <vector>
 
-#include "spline.h"
-#include "../tools/tools.h"
+#include "spline_2d.h"
+#include "../../tools/tools.h"
 
 
 int main(int agrc, char* argv[])
@@ -28,8 +28,7 @@ int main(int agrc, char* argv[])
     std::vector<double> x, y, w;
 
     std::cout << "Reading result..." << std::endl;
-
-    reading_data(x, y, w, vals_name, inputFilename);
+    reading_data_2d(x, y, w, vals_name, inputFilename);
 
     std::cout << "Approximation of data..." << std::endl;
     Spline spl(splineDegree, knotsCount);
@@ -41,7 +40,7 @@ int main(int agrc, char* argv[])
     spl.computingCoefficients(x, y, w);
 
     std::cout << "Saving result..." << std::endl;
-    writing_result(x[0], x[x.size()-1], pointsCount, spl, outputFilename, vals_name);
+    writing_result_2d(x[0], x[x.size() - 1], pointsCount, spl, outputFilename, vals_name);
 
     return 0;
 }

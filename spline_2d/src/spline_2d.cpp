@@ -5,8 +5,8 @@
 #include <iostream>
 #include <cmath>
 
-#include "spline.h"
-#include "../tools/tools.h"
+#include "spline_2d.h"
+#include "../../tools/tools.h"
 
 
 // public:
