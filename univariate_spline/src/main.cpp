@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 
-#include "spline_2d.h"
+#include "univariate_spline.h"
 #include "../../tools/tools.h"
 
 
@@ -28,10 +28,10 @@ int main(int agrc, char* argv[])
     std::vector<double> x, y, w;
 
     std::cout << "Reading result..." << std::endl;
-    reading_data_2d(x, y, w, vals_name, inputFilename);
+    readingData2d(x, y, w, vals_name, inputFilename);
 
     std::cout << "Approximation of data..." << std::endl;
-    Spline spl(splineDegree, knotsCount);
+    UnivariateSpline spl(splineDegree, knotsCount);
 
     std::cout << "\tInitialize uniform knots..." << std::endl;
     spl.initializeUniformKnots(x);
@@ -40,7 +40,7 @@ int main(int agrc, char* argv[])
     spl.computingCoefficients(x, y, w);
 
     std::cout << "Saving result..." << std::endl;
-    writing_result_2d(x[0], x[x.size() - 1], pointsCount, spl, outputFilename, vals_name);
+    writingResult2d(x[0], x[x.size() - 1], pointsCount, spl, outputFilename, vals_name);
 
     return 0;
 }

@@ -5,20 +5,20 @@
 #include <iostream>
 #include <cmath>
 
-#include "spline_2d.h"
+#include "univariate_spline.h"
 #include "../../tools/tools.h"
 
 
 // public:
 
-Spline::Spline(const unsigned int& degree, const unsigned int& knotsCount){
+UnivariateSpline::UnivariateSpline(const unsigned int& degree, const unsigned int& knotsCount){
     this->degree = degree;
     this->knotsCount = knotsCount;
     this->internalKnotsCount = knotsCount - 2;
 }
 
 
-void Spline::initializeUniformKnots(const std::vector<double> &x) {
+void UnivariateSpline::initializeUniformKnots(const std::vector<double> &x) {
     const auto points_count = static_cast<const unsigned int>(x.size());
     unsigned int unique_points = 0;
     const unsigned int oldKnotsCount = knotsCount;
@@ -63,7 +63,7 @@ void Spline::initializeUniformKnots(const std::vector<double> &x) {
 }
 
 
-void Spline::computingCoefficients(const std::vector<double> &x, const std::vector<double> &y,
+void UnivariateSpline::computingCoefficients(const std::vector<double> &x, const std::vector<double> &y,
                                    const std::vector<double> &w) {
 
     const unsigned int sizeMatrix = internalKnotsCount + degree + 1;
@@ -96,17 +96,17 @@ void Spline::computingCoefficients(const std::vector<double> &x, const std::vect
 }
 
 
-unsigned int Spline::getKnotsCount() const{
+unsigned int UnivariateSpline::getKnotsCount() const{
     return internalKnotsCount + 2;
 }
 
 
-unsigned int Spline::getDegree() const{
+unsigned int UnivariateSpline::getDegree() const{
     return degree;
 }
 
 
-std::vector<double> Spline::getKnots() const{
+std::vector<double> UnivariateSpline::getKnots() const{
 
     std::vector<double> differentKnots(internalKnotsCount + 2);
 
@@ -120,7 +120,7 @@ std::vector<double> Spline::getKnots() const{
 
 // private:
 
-void Spline::computingMatrixA(std::vector<std::vector<double>>& A, const unsigned int& sizeMatrix,
+void UnivariateSpline::computingMatrixA(std::vector<std::vector<double>>& A, const unsigned int& sizeMatrix,
                               const std::vector<double>& x, const std::vector<double>& y,
                               const std::vector<double>& w){
 
@@ -147,7 +147,7 @@ void Spline::computingMatrixA(std::vector<std::vector<double>>& A, const unsigne
 }
 
 
-void Spline::initializeBSplines(const double& x, std::vector<double>& bSplines){
+void UnivariateSpline::initializeBSplines(const double& x, std::vector<double>& bSplines){
 
     const int leftBoardId = getLeftKnotIndex(x, 0);
 
@@ -175,13 +175,13 @@ void Spline::initializeBSplines(const double& x, std::vector<double>& bSplines){
 
 
 // For B-Spline.
-double Spline::getAlpha(const double &x, const unsigned int &knotId, const unsigned int &deg) const{
+double UnivariateSpline::getAlpha(const double &x, const unsigned int &knotId, const unsigned int &deg) const{
     return (x - knots[knotId]) / (knots[knotId + deg] - knots[knotId]);
 }
 
 
 // Get S(x).
-double Spline::getValue(const double &x) const {
+double UnivariateSpline::getValue(const double &x) const {
     if (x < knots[0] || x > knots[knotsCount-1]){
         return 0;
     }
@@ -189,7 +189,7 @@ double Spline::getValue(const double &x) const {
 }
 
 
-double Spline::deBoorAlgorithm(const double& x) const{
+double UnivariateSpline::deBoorAlgorithm(const double& x) const{
 
     int leftBound = getLeftKnotIndex(x, 0);
     if (leftBound < 0){
@@ -213,7 +213,7 @@ double Spline::deBoorAlgorithm(const double& x) const{
 }
 
 
-int Spline::getLeftKnotIndex(const double &x, const int &minId) const{
+int UnivariateSpline::getLeftKnotIndex(const double &x, const int &minId) const{
     if(x < knots[0] or x > knots[knotsCount-1]){
         return -1;
     }

@@ -2,16 +2,16 @@
 // Created by Aleksandr on 04-Sep-18.
 //
 
-#ifndef SPLINE_2D_SPLINE_H
-#define SPLINE_2D_SPLINE_H
+#ifndef UNIVARIATE_SPLINE
+#define UNIVARIATE_SPLINE
 
 #include <vector>
 
-class Spline {
+class UnivariateSpline {
 
 public:
 
-    Spline(const unsigned int& degree, const unsigned int& knotsCount);
+    UnivariateSpline(const unsigned int& degree, const unsigned int& knotsCount);
 
     void initializeUniformKnots(const std::vector<double> &x);
     void computingCoefficients(const std::vector<double> &x, const std::vector<double> &y,
@@ -44,4 +44,4 @@ private:
 };
 
 
-#endif //SPLINE_2D_SPLINE_H
+#endif //UNIVARIATE_SPLINE

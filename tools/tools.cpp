@@ -7,7 +7,6 @@
 #include <sstream>
 
 #include "tools.h"
-#include "../spline_2d/src/spline_2d.h"
 
 
 template <class Container>
@@ -44,8 +43,9 @@ void reflectionOfMatrix(std::vector<std::vector<double>>& matrix, const unsigned
 }
 
 
-void writing_result_2d(const double &leftBound, const double &rightBound, const unsigned int &stepCount,
-                       const Spline &spl, const std::string &out_name, const std::vector<std::string> &vals_name) {
+void writingResult2d(const double &leftBound, const double &rightBound, const unsigned int &stepCount,
+                     const UnivariateSpline &spl, const std::string &out_name,
+                     const std::vector<std::string> &vals_name) {
 
     std::ofstream o_file(out_name);
     o_file << vals_name[0] << "," << vals_name[1] + "_spl" << std::endl;
@@ -73,8 +73,8 @@ void writing_result_2d(const double &leftBound, const double &rightBound, const 
     o_file.close();
 }
 
-void writing_result_3d(const double &leftBound, const double &rightBound, const unsigned int &stepCount,
-                       const Spline &spl, const std::string &out_name, const std::vector<std::string> &vals_name) {
+void writingResult3d(const double &leftBound, const double &rightBound, const unsigned int &stepCount,
+                     const BivariateSpline &spl, const std::string &out_name, const std::vector<std::string> &vals_name) {
 
     std::ofstream o_file(out_name);
     o_file << vals_name[0] << "," << vals_name[1] + "_spl" << std::endl;
@@ -103,8 +103,8 @@ void writing_result_3d(const double &leftBound, const double &rightBound, const 
 }
 
 
-void reading_data_2d(std::vector<double> &x, std::vector<double> &y, std::vector<double> &w,
-                     std::vector<std::string> &vals_name, const std::string &inputFilename) {
+void readingData2d(std::vector<double> &x, std::vector<double> &y, std::vector<double> &w,
+                   std::vector<std::string> &vals_name, const std::string &inputFilename) {
 
     std::ifstream i_file(inputFilename);
 
@@ -140,8 +140,8 @@ void reading_data_2d(std::vector<double> &x, std::vector<double> &y, std::vector
     i_file.close();
 }
 
-void reading_data_3d(std::vector<double> &x, std::vector<double> &y, std::vector<double> &z, std::vector<double> &w,
-                     std::vector<std::string> &vals_name, const std::string &inputFilename) {
+void readingData3d(std::vector<double> &x, std::vector<double> &y, std::vector<double> &z, std::vector<double> &w,
+                   std::vector<std::string> &vals_name, const std::string &inputFilename) {
 
     std::ifstream i_file(inputFilename);
 

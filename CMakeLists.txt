@@ -5,5 +5,5 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_executable(data_gen tools/data_gen.cpp)
 
-add_executable(splines_2d spline_2d/src/main.cpp spline_2d/src/spline_2d.cpp tools/tools.cpp)
-add_executable(splines_3d spline_3d/src/main.cpp spline_3d/src/spline_3d.cpp tools/tools.cpp)
+add_executable(splines_2d univariate_spline/src/main.cpp univariate_spline/src/univariate_spline.cpp tools/tools.cpp)
+add_executable(splines_3d bivariate_spline/src/main.cpp bivariate_spline/src/bivariate_spline.cpp tools/tools.cpp)
