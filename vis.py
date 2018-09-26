@@ -17,17 +17,7 @@ def reading(filename):
     return vals, labels
 
 
-def main():
-
-    try:
-        data_filename = sys.argv[1]
-        result_filename = sys.argv[2]
-        result_knots_filename = sys.argv[3]
-
-    except IndexError:
-        print("Args: <data filename> <result filename> <result knots filename>")
-        raise SystemExit(0)
-
+def draw_2d(data_filename, result_filename, result_knots_filename):
     vals, labels = reading(data_filename)
     plt.plot(vals[0], vals[1], 'r.', label='data')
 
@@ -46,5 +36,26 @@ def main():
 
     plt.show()
 
+
+def main():
+    try:
+        dim = int(sys.argv[1])
+        data_filename = sys.argv[2]
+        result_filename = sys.argv[3]
+        result_knots_filename = sys.argv[4]
+
+    except IndexError:
+        print("Args: <dimension> <data filename> <result filename> <result knots filename>")
+        return
+    except ValueError:
+        print("Dimension should be int")
+        return
+    else:
+        if dim == 2:
+            draw_2d(data_filename, result_filename, result_knots_filename)
+        elif dim == 3:
+            pass
+        else:
+            print("Dimension should be 2 or 3")
 
 main()

@@ -1,12 +1,8 @@
-//
-// Created by Aleksandr on 04-Sep-18.
-//
-
 #include <iostream>
 #include <cmath>
 
 #include "univariate_spline.h"
-#include "../../tools/tools.h"
+#include "../../tools/tools_2d.h"
 
 
 // public:

@@ -26,7 +26,7 @@ int main(int argc, char* argv[]){
                                                                        };
 
     if (argc != 7 && argc != 9){
-        std::cout << "Args: <dim> <func type> <begin val x> <end val x>\n" <<
+        std::cout << "Args: <dimension> <func type> <begin val x> <end val x>\n" <<
                      "      [<begin val y> <end val y>]** <step count> <out filename>\n" <<
                      "      [for dim = 3]" << std::endl;
         printAllowFunctionTypes(allowFunctionTypes[0], 2);

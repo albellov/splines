@@ -2,8 +2,8 @@
 // Created by Aleksandr on 04-Sep-18.
 //
 
-#ifndef UNIVARIATE_SPLINE
-#define UNIVARIATE_SPLINE
+#ifndef UNIVARIATE_SPLINE_H_
+#define UNIVARIATE_SPLINE_H_
 
 #include <vector>
 
@@ -44,4 +44,4 @@ private:
 };
 
 
-#endif //UNIVARIATE_SPLINE
+#endif //UNIVARIATE_SPLINE_H_

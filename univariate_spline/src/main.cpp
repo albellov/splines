@@ -1,20 +1,17 @@
-//
-// Created by Aleksandr on 04-Sep-18.
-//
-
 #include <cmath>
 #include <string>
 #include <iostream>
 #include <vector>
 
 #include "univariate_spline.h"
-#include "../../tools/tools.h"
+#include "../../tools/tools_2d.h"
 
 
 int main(int agrc, char* argv[])
 {
     if (agrc < 6){
-        std::cout << "Args: <data filename> <result filename> <points count> <spline knots count> <spline degree>" << std::endl;
+        std::cout << "\nArgs: <data filename> <result filename> <points count> <spline knots count> <spline degree>"
+                  << "\nFor example: ./univariate_spline.exe data result 1000 7 3" << std::endl;
         return 1;
     }
 
